@@ -49,6 +49,11 @@ int times = 0;
 uint8_t u2_RX_Buf[MAX_LEN];
 uint8_t u2_RX_ReceiveBit;
 int rx_len = 0;
+//机械臂2150收紧，1100张开
+//收缩臂1500收，800伸
+//电机3200次翻转一圈
+//黑色舵机1520中间，1250一边，1780另一边
+//蓝色1476中间，1310一边，1590另一边
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
