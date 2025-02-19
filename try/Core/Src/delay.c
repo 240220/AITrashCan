@@ -26,85 +26,84 @@ void delay_init(void) {
     fac_ms = 100000;  //作为时基的计数器时钟频率在HAL_InitTick()中被设为了1MHz
     fac_us = fac_ms / 1000;
 #else
-    fac_ms = SystemCoreClock / 1000;
-    fac_us = fac_ms / 1000;
+	fac_ms = SystemCoreClock / 1000;
+	fac_us = fac_ms / 1000;
 #endif
 }
 
 /*微秒级延时*/
 void delay_us(uint32_t nus) {
-    uint32_t ticks = 0;
-    uint32_t told = 0;
-    uint32_t tnow = 0;
-    uint32_t tcnt = 0;
-    uint32_t reload = 0;
+	uint32_t ticks = 0;
+	uint32_t told = 0;
+	uint32_t tnow = 0;
+	uint32_t tcnt = 0;
+	uint32_t reload = 0;
 
-    reload = Delay_GetAutoreload();
+	reload = Delay_GetAutoreload();
 
-    ticks = nus * fac_us;
+	ticks = nus * fac_us;
 
-    told = Delay_GetCounter();
+	told = Delay_GetCounter();
 
-    while (1) {
-        tnow = Delay_GetCounter();
+	while (1) {
+		tnow = Delay_GetCounter();
 
-        if (tnow != told) {
-            if (tnow < told) {
-                tcnt += told - tnow;
-            } else {
-                tcnt += reload - tnow + told;
-            }
-            told = tnow;
-            if (tcnt >= ticks) {
-                break;
-            }
-        }
-    }
+		if (tnow != told) {
+			if (tnow < told) {
+				tcnt += told - tnow;
+			} else {
+				tcnt += reload - tnow + told;
+			}
+			told = tnow;
+			if (tcnt >= ticks) {
+				break;
+			}
+		}
+	}
 }
 
 /*毫秒级延时*/
 void delay_ms(uint32_t nms) {
-    uint32_t ticks = 0;
-    uint32_t told = 0;
-    uint32_t tnow = 0;
-    uint32_t tcnt = 0;
-    uint32_t reload = 0;
+	uint32_t ticks = 0;
+	uint32_t told = 0;
+	uint32_t tnow = 0;
+	uint32_t tcnt = 0;
+	uint32_t reload = 0;
 
-    reload = Delay_GetAutoreload();
+	reload = Delay_GetAutoreload();
 
-    ticks = nms * fac_ms;
+	ticks = nms * fac_ms;
 
-    told = Delay_GetCounter();
+	told = Delay_GetCounter();
 
-    while (1) {
-        tnow = Delay_GetCounter();
+	while (1) {
+		tnow = Delay_GetCounter();
 
-        if (tnow != told) {
-            if (tnow < told) {
-                tcnt += told - tnow;
-            } else {
-                tcnt += reload - tnow + told;
-            }
-            told = tnow;
-            if (tcnt >= ticks) {
-                break;
-            }
-        }
-    }
+		if (tnow != told) {
+			if (tnow < told) {
+				tcnt += told - tnow;
+			} else {
+				tcnt += reload - tnow + told;
+			}
+			told = tnow;
+			if (tcnt >= ticks) {
+				break;
+			}
+		}
+	}
 }
 
 /*重写HAL_Delay*/
 void HAL_Delay(uint32_t Delay) {
-    uint32_t tickstart = HAL_GetTick();
-    uint32_t wait = Delay;
+	uint32_t tickstart = HAL_GetTick();
+	uint32_t wait = Delay;
 
-    /*不太明白官方源码为啥这么写，会多延时1ms，注释掉后更准*/
-    //  /* Add a freq to guarantee minimum wait */
-    //  if (wait < HAL_MAX_DELAY)
-    //  {
-    //    wait += (uint32_t)(uwTickFreq);
-    //  }
-
-    while ((HAL_GetTick() - tickstart) < wait) {
-    }
+	/*不太明白官方源码为啥这么写，会多延时1ms，注释掉后更准*/
+	//  /* Add a freq to guarantee minimum wait */
+	//  if (wait < HAL_MAX_DELAY)
+	//  {
+	//    wait += (uint32_t)(uwTickFreq);
+	//  }
+	while ((HAL_GetTick() - tickstart) < wait) {
+	}
 }
