@@ -22,7 +22,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-#include "delay.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -48,12 +48,17 @@
 int times = 0;
 uint8_t u2_RX_Buf[MAX_LEN];
 uint8_t u2_RX_ReceiveBit;
+uint8_t u1_Receive[100];
+uint8_t tool;
 int rx_len = 0;
-//机械臂2150收紧，1100张开
-//收缩臂1500收，800伸
-//电机3200次翻转一圈
-//黑色舵机1520中间，1250一边，1780另一边
-//蓝色1476中间，1310一边，1590另一边
+typedef enum {
+	plate_down, plate_up, catch, rotate, board
+} servo;
+//机械�???????2150收紧�???????1100张开
+//收缩�???????1500收，800�???????
+//电机3200次翻转一�???????
+//黑色舵机1520中间�???????1250�???????边，1780另一�???????
+//蓝色1476中间�???????1310�???????边，1590另一�???????
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -100,6 +105,32 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 		u1_printf("\n");
 		HAL_UART_Receive_DMA(&huart2, u2_RX_Buf, RX_BUF_LEN);
 	}
+	if (huart == &huart1) {
+		u1_printf("copy\n");
+		HAL_UART_Receive_IT(&huart1, u1_Receive, 6);
+	}
+}
+void Set_Angle(int angle, servo s) {
+	int pulse = 0;
+	switch (s) {
+	case plate_down:
+		pulse = (int)(1500 - angle * 6.5);
+		__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, pulse);
+		break;
+	case plate_up:
+		pulse = 1476 + angle * 6;
+		break;
+	case catch:
+		pulse = 1500 - angle * 10;
+		break;
+	case rotate:
+		pulse = 3200 - angle * 10;
+		break;
+	case board:
+		pulse = 1520 - angle * 10;
+		break;
+	}
+//	__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, pulse); //要重�??????
 }
 /* USER CODE END 0 */
 
@@ -135,25 +166,43 @@ int main(void) {
 	MX_TIM1_Init();
 	MX_USART1_UART_Init();
 	MX_USART2_UART_Init();
-	delay_init();
 	/* USER CODE BEGIN 2 */
 	HAL_TIM_Base_Start_IT(&htim2);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-	__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1,1500);
-	HAL_UART_Receive_DMA(&huart2, u2_RX_Buf, RX_BUF_LEN);
+	HAL_Delay(3000);
+	u1_printf("start\n");
+
+	HAL_UART_Receive_DMA(&huart1, u1_Receive, 1);
+	u1_printf("ok\n");
+//	HAL_UART_Receive_DMA(&huart2, u2_RX_Buf, RX_BUF_LEN);
+//	Set_Angle(30, plate_down);
+//	HAL_Delay(1000);
+//	Set_Angle(-30, plate_down);
+	int a = 0;
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-	/* USER CODE END WHILE */
+		/* USER CODE END WHILE */
 
-	/* USER CODE BEGIN 3 */
-//    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_1);
-//    HAL_Delay(3000);
-//    u1_printf("hello");
+		/* USER CODE BEGIN 3 */
+//		for(int j = 1200;j<2000;j++)
+//		{
+//			__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, j);
+//			HAL_Delay(10);
+//		}
+//		for(int j = 2000;j>1200;j--)
+//		{
+//			__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, j);
+//			HAL_Delay(10);
+//		}
+		Set_Angle(90, plate_down);
+		HAL_Delay(3000);
+		Set_Angle(-90, plate_down);
+		HAL_Delay(3000);
 	}
 	/* USER CODE END 3 */
 }
