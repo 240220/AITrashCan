@@ -34,14 +34,23 @@ extern "C" {
 
 extern UART_HandleTypeDef huart1;
 
+extern UART_HandleTypeDef huart2;
+
+extern UART_HandleTypeDef huart3;
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
 
 void MX_USART1_UART_Init(void);
+void MX_USART2_UART_Init(void);
+void MX_USART3_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 void u1_printf(char* fmt, ...);
+void u3_printf(char* fmt, ...);
+void usart_SendCmd(__IO uint8_t *cmd, uint8_t len);
+void usart_SendByte(uint8_t data);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

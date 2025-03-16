@@ -1,29 +1,27 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
- * @file    usart.c
- * @brief   This file provides code for the configuration
- *          of the USART instances.
- ******************************************************************************
- * @attention
- *
- * Copyright (c) 2025 STMicroelectronics.
- * All rights reserved.
- *
- * This software is licensed under terms that can be found in the LICENSE file
- * in the root directory of this software component.
- * If no LICENSE file comes with this software, it is provided AS-IS.
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @file    usart.c
+  * @brief   This file provides code for the configuration
+  *          of the USART instances.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2025 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
+
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
@@ -260,25 +258,5 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
-void u1_printf(char *fmt, ...) {
-	uint16_t len;
-	va_list ap;
-	va_start(ap, fmt);
-	uint8_t buf[200];
-	vsprintf((char*) buf, fmt, ap);
-	va_end(ap);
-	len = strlen((char*) buf);
-	HAL_UART_Transmit(&huart1, buf, len, HAL_MAX_DELAY); //若使用了其他UART通道，将对应通道（参�?1）修改即可�?�该函数在（6.补充）中会进行说明�??
-}
-void u2_printf(char *fmt, ...) {
-	uint16_t len;
-	va_list ap;
-	va_start(ap, fmt);
-	uint8_t buf[200];
-	vsprintf((char*) buf, fmt, ap);
-	va_end(ap);
-	len = strlen((char*) buf);
-	HAL_UART_Transmit(&huart2, buf, len, HAL_MAX_DELAY); //若使用了其他UART通道，将对应通道（参�?1）修改即可�?�该函数在（6.补充）中会进行说明�??
-}
 
 /* USER CODE END 1 */

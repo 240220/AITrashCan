@@ -1,4 +1,9 @@
-usart.c:34:6:MX_USART1_UART_Init	2
-usart.c:62:6:HAL_UART_MspInit	3
-usart.c:114:6:HAL_UART_MspDeInit	2
-usart.c:143:6:u1_printf	1
+usart.c:37:6:MX_USART1_UART_Init	2
+usart.c:66:6:MX_USART2_UART_Init	2
+usart.c:95:6:MX_USART3_UART_Init	2
+usart.c:123:6:HAL_UART_MspInit	6
+usart.c:245:6:HAL_UART_MspDeInit	4
+usart.c:315:6:u1_printf	1
+usart.c:325:6:u3_printf	1
+usart.c:340:8:usart_SendCmd	2
+usart.c:352:8:usart_SendByte	3

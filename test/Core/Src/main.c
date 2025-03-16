@@ -47,6 +47,15 @@
 
 /* USER CODE BEGIN PV */
 uint8_t u1_Receive[20];
+uint8_t u3_Receive[5];
+uint8_t u3_Transmit[3] = "19\n";
+
+//电机3200次翻转一�?
+//顺时针0123垃圾桶，1是可回收
+//上面1466平
+//1210可倒0、2(1663倒0，1322倒2)
+//1759可倒1、3(1663倒3，1322倒1)
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -61,6 +70,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	if (huart == &huart1) {
 		u1_printf("copy\n");
 		HAL_UART_Receive_DMA(&huart1, u1_Receive, 6);
+	}
+	if (huart == &huart3) {
+		u1_printf("\nreceive from huart3: ");
+		for(int i =0;i<8;i++){
+			u1_printf("%d ", u3_Receive[i]);
+		}
+		HAL_UART_Receive_DMA(&huart3, u3_Receive, 5);
 	}
 }
 /* USER CODE END 0 */
@@ -97,21 +113,50 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
+  MX_USART2_UART_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_UART_Receive_DMA(&huart1, u1_Receive, 1);
+  HAL_UART_Receive_DMA(&huart3, u3_Receive, 5);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
-  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_1, 1500);
-  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1500);
+//  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_1, 1500);
+//  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1466);
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+//	  Emm_V5_Pos_Control(1, 1, 500, 0, 3200, 1, 0);//addr,dir,v,a,maichong,juedui,tongbu
+//	  HAL_Delay(3000);
+//	  Emm_V5_Pos_Control(1, 0, 500, 0, 3200, 1, 0);
+//	  HAL_Delay(3000);
+	  HAL_UART_Transmit(&huart3, u3_Transmit, 3, HAL_MAX_DELAY);
+	  HAL_Delay(2000);
+//	  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_1, 1210);
+//	  HAL_Delay(1500);
+//	  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1663);
+//	  HAL_Delay(1500);
+//	  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1466);
+//	  HAL_Delay(1500);
+//	  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1322);
+//	  HAL_Delay(1500);
+//	  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1466);
+//	  HAL_Delay(1500);
+//	  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_1, 1759);
+//	  HAL_Delay(1500);
+//	  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1322);
+//	  HAL_Delay(1500);
+//	  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1466);
+//	  HAL_Delay(1500);
+//	  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1663);
+//	  HAL_Delay(1500);
+//	  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1466);
+//	  HAL_Delay(1500);
   }
   /* USER CODE END 3 */
 }
