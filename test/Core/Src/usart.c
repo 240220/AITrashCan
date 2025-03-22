@@ -202,17 +202,17 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     /* USART3 clock enable */
     __HAL_RCC_USART3_CLK_ENABLE();
 
-    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOD_CLK_ENABLE();
     /**USART3 GPIO Configuration
-    PB10     ------> USART3_TX
-    PB11     ------> USART3_RX
+    PD8     ------> USART3_TX
+    PD9     ------> USART3_RX
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11;
+    GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
     /* USART3 DMA Init */
     /* USART3_RX Init */
@@ -295,10 +295,10 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
     __HAL_RCC_USART3_CLK_DISABLE();
 
     /**USART3 GPIO Configuration
-    PB10     ------> USART3_TX
-    PB11     ------> USART3_RX
+    PD8     ------> USART3_TX
+    PD9     ------> USART3_RX
     */
-    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_10|GPIO_PIN_11);
+    HAL_GPIO_DeInit(GPIOD, GPIO_PIN_8|GPIO_PIN_9);
 
     /* USART3 DMA DeInit */
     HAL_DMA_DeInit(uartHandle->hdmarx);
@@ -320,7 +320,7 @@ void u1_printf(char *fmt, ...) {
 	vsprintf((char*) buf, fmt, ap);
 	va_end(ap);
 	len = strlen((char*) buf);
-	HAL_UART_Transmit(&huart1, buf, len, HAL_MAX_DELAY); //若使用了其他UART通道，将对应通道（参�????1）修改即可�?�该函数在（6.补充）中会进行说明�??
+	HAL_UART_Transmit(&huart1, buf, len, HAL_MAX_DELAY); //若使用了其他UART通道，将对应通道（参�?????1）修改即可�?�该函数在（6.补充）中会进行说明�??
 }
 void u3_printf(char *fmt, ...) {
 	uint16_t len;
@@ -330,12 +330,12 @@ void u3_printf(char *fmt, ...) {
 	vsprintf((char*) buf, fmt, ap);
 	va_end(ap);
 	len = strlen((char*) buf);
-	HAL_UART_Transmit(&huart3, buf, len, HAL_MAX_DELAY); //若使用了其他UART通道，将对应通道（参�????1）修改即可�?�该函数在（6.补充）中会进行说明�??
+	HAL_UART_Transmit(&huart3, buf, len, HAL_MAX_DELAY); //若使用了其他UART通道，将对应通道（参�?????1）修改即可�?�该函数在（6.补充）中会进行说明�??
 }
 /**
-	* @brief   USART发�?�多个字�??
-	* @param   �??
-	* @retval  �??
+	* @brief   USART发�?�多个字�???
+	* @param   �???
+	* @retval  �???
 	*/
   void usart_SendCmd(__IO uint8_t *cmd, uint8_t len)
   {
@@ -345,9 +345,9 @@ void u3_printf(char *fmt, ...) {
   }
   
   /**
-    * @brief   USART发�?�一个字�??
-    * @param   �??
-    * @retval  �??
+    * @brief   USART发�?�一个字�???
+    * @param   �???
+    * @retval  �???
     */
   void usart_SendByte(uint8_t data)
   {
