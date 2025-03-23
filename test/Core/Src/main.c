@@ -22,6 +22,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "math.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -51,18 +52,20 @@ uint8_t u3_Receive[6];
 uint8_t u3_Transmit[3] = { 16, 2, 3 };
 uint8_t number = 9;
 uint8_t full[4] = { 0, 0, 0, 0 };
+float x01 =3050.0;
+float x02 =13850.0;
 
 //电机3200次翻转一周
 //顺时针0123垃圾桶，1是可回收
 //上面1480平
-//1240可倒0、2(1690倒0，1260倒2)  0右上角，1右下角
-//1790可倒1、3(1663倒3，1300倒1)
+//1240可倒0、2(1740倒0，1220倒2)  0右上角，1右下角
+//1790可倒1、3(1740倒3，1220倒1)
 //1520斜着可抓入
 //顺时针转红外时间变长
-//上挡板1550关1200开
-//右挡板1360关1000开
-//下挡板1250关950开
-//左边挡板1400闭1150开
+//上挡板1430关1200开
+//右挡板1420关1000开
+//下挡板1200关950开
+//左边挡板1420闭1150开
 //1680升起914放下
 //1865张开1346抓住
 //右侧开门
@@ -70,7 +73,7 @@ uint8_t full[4] = { 0, 0, 0, 0 };
 //1电机youshang youshang为方向1，左下为0    0.0062304mm横向/格
 //2电机zuoshang youxia为方向1，左上为0
 //上下12808，左右17212
-
+//1 1 1690,2 1 15130
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -121,39 +124,48 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 }
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	if (huart == &huart1) {
-		HAL_UART_Receive_DMA(&huart1, u1_Receive, 5);
-		for (int i = 0; i < 6; i++) {
+		// HAL_UART_Receive_DMA(&huart1, u1_Receive, 5); // 调舵机
+		// for(int i =0;i<5;i++){
+		// 	u1_printf("%d ", u1_Receive[i]);
+		// }
+		// int value = 1000 * (u1_Receive[1] - '0') + 100 * (u1_Receive[2] - '0')
+		// 		+ 10 * (u1_Receive[3] - '0') + u1_Receive[4] - '0';
+		// u1_printf("\nvalue=%d\n", value);
+		// switch (u1_Receive[0] - '0') {
+		// case 1:
+		// 	__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_1, value);
+		// 	break;
+		// case 2:
+		// 	__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, value);
+		// 	break;
+		// case 3:
+		// 	__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_3, value);
+		// 	break;
+		// case 4:
+		// 	__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_4, value);
+		// 	break;
+		// case 5:
+		// 	__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, value);
+		// 	break;
+		// case 6:
+		// 	__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, value);
+		// 	break;
+		// case 7:
+		// 	__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_3, value);
+		// 	break;
+		// case 8:
+		// 	__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, value);
+		// 	break;
+		// }
+
+		for(int i = 0;i<7;i++){
 			u1_printf("%d ", u1_Receive[i]);
 		}
-		int value = 1000 * (u1_Receive[1] - '0') + 100 * (u1_Receive[2] - '0')
-				+ 10 * (u1_Receive[3] - '0') + u1_Receive[4] - '0';
-		u1_printf("\nvalue=%d\n", value);
-		switch (u1_Receive[0] - '0') {
-		case 1:
-			__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_1, value);
-			break;
-		case 2:
-			__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, value);
-			break;
-		case 3:
-			__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_3, value);
-			break;
-		case 4:
-			__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_4, value);
-			break;
-		case 5:
-			__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, value);
-			break;
-		case 6:
-			__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, value);
-			break;
-		case 7:
-			__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_3, value);
-			break;
-		case 8:
-			__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, value);
-			break;
-		}
+		u1_printf("\n");
+		int value = 10000*(u1_Receive[2]-'0')+1000*(u1_Receive[3]-'0')+100*(u1_Receive[4]-'0')+10*(u1_Receive[5]-'0')+u1_Receive[6]-'0';
+		u1_printf("value=%d\n",value);
+		Emm_V5_Pos_Control(u1_Receive[0]-'0',u1_Receive[1]-'0',500,0,value,1,0);
+		HAL_UART_Receive_DMA(&huart1, u1_Receive, 7);
 	}
 	if (huart == &huart3) {
 		u1_printf("\nreceive from huart3: ");
@@ -174,10 +186,10 @@ void IsBoardOpen(uint8_t open) {
 		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, 1150);
 	}
 	if (open == 0) {
-		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, 1550);
-		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, 1360);
-		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_3, 1250);
-		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, 1400);
+		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, 1430);
+		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, 1420);
+		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_3, 1200);
+		__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_4, 1420);
 	}
 	HAL_Delay(500);
 }
@@ -186,39 +198,62 @@ void Pour(uint8_t num) {
 	case 0:
 		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_1, 1240);
 		HAL_Delay(1000);
-		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1690);
+		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1740);
 		HAL_Delay(2000);
-		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1466);
+		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1480);
 		HAL_Delay(500);
 		break;
 	case 1:
 		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_1, 1790);
 		HAL_Delay(1000);
-		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1260);
+		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1220);
 		HAL_Delay(2000);
-		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1466);
+		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1480);
 		HAL_Delay(500);
 		break;
 	case 2:
 		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_1, 1240);
 		HAL_Delay(1000);
-		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1260);
+		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1220);
 		HAL_Delay(2000);
-		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1466);
+		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1480);
 		HAL_Delay(500);
 		break;
 	case 3:
 		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_1, 1790);
 		HAL_Delay(1000);
-		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1690);
+		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1740);
 		HAL_Delay(2000);
-		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1466);
+		__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 1480);
 		HAL_Delay(500);
 		break;
 	}
 }
 void Positon(int x, int y) {
-
+	float x1 = (x+y)/2;
+	float x2 = (x-y)/2;
+	float value1 = x1*45.56;
+	float value2 = x2*45.56;
+	GoTogether(value1,value2);
+}
+void GoTogether(float value1, float value2){
+	int speed = 1000;
+	int speedx = speed*cos(atan(value2/value1));
+	int speedy = speed*sin(atan(value2/value1));
+	if(value1+x01<0){
+		Emm_V5_Pos_Control(1, 0, speedx, 0, 0-value1-x01, 1, 1);
+	}else{
+		Emm_V5_Pos_Control(1, 1, speedx, 0, value1+x01, 1, 1);
+	}
+	HAL_Delay(10);
+	if(value2+x02<0){
+		Emm_V5_Pos_Control(2, 0, speedy, 0, 0-value2-x02, 1, 1);
+	}else{
+		Emm_V5_Pos_Control(2, 1, speedy, 0, value2+x02, 1, 1);
+	}
+	HAL_Delay(10);
+	Emm_V5_Synchronous_motion(0);
+	HAL_Delay(2000);
 }
 void Catch() {
 	__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_3, 1100);
@@ -283,7 +318,7 @@ int main(void) {
 	MX_USART3_UART_Init();
 	MX_TIM3_Init();
 	/* USER CODE BEGIN 2 */
-	HAL_UART_Receive_DMA(&huart1, u1_Receive, 5);
+	HAL_UART_Receive_DMA(&huart1, u1_Receive, 7);
 	HAL_UART_Receive_DMA(&huart3, u3_Receive, 5);
 
 	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);//平台倒
@@ -304,11 +339,19 @@ int main(void) {
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
 
-	HAL_Delay(500); //                             归中心点
-	Emm_V5_Pos_Control(2, 1, 5000, 0, 15130, 1, 0);
-	HAL_Delay(500);
-	Emm_V5_Pos_Control(1, 1, 5000, 0, 1690, 1, 0);
-	HAL_Delay(500);
+//	HAL_Delay(3000); //                             归中心点
+//	Emm_V5_Pos_Control(2, 1, 500, 0, 13850, 1, 0);
+//	HAL_Delay(500);
+//	Emm_V5_Pos_Control(1, 1, 500, 0, 3050, 1, 0);//1108800到右上螺丝
+//	//16401.4286到边界，45.56*摄像头坐标
+//	HAL_Delay(500);
+
+//	Pour(0);
+//	HAL_Delay(3000);
+//	Pour(1);
+//	HAL_Delay(3000);
+//	Pour(2);
+//	HAL_Delay(3000);
 
 
 	/* USER CODE END 2 */
