@@ -1,0 +1,18 @@
+train: E:\gongchuang\YOLO检测\ultralytics-8.3.77\data\data07_split\images\train
+val: E:\gongchuang\YOLO检测\ultralytics-8.3.77\data\data07_split\images\val
+
+nc: 13
+names: [
+    "Battery",
+    "Medicine",
+    "Paper cup",
+    "Plastic bottle",
+    "Can",
+    "Potato",
+    "White radish",
+    "Carrot",
+    "Ceramic tile",
+    "Pebble",
+    "Brick",
+    "pepper",
+    "tomato"]
