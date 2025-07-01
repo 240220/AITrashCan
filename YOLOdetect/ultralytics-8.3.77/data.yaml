@@ -1,0 +1,5 @@
+train: E:\工创\YOLO检测\ultralytics-8.3.77\data\ImageSets\images\train
+val: E:\工创\YOLO检测\ultralytics-8.3.77\data\ImageSets\images\val
+
+nc: 4
+names: ["1","2","3","4"]

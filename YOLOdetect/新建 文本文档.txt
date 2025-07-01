@@ -1,0 +1,14 @@
+装python
+
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt install python3.8
+python3.8 --version
+
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1
+sudo update-alternatives --config python3
+
+
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py   # 下载安装脚本
+sudo python get-pip.py    # 运行安装脚本
